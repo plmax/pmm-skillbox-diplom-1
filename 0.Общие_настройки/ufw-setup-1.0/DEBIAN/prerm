@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+PKG_STATE_DIR="/var/lib/ufw-setup"
+
+case "$1" in
+  remove|purge)
+    command -v ufw >/dev/null 2>&1 || exit 0
+
+    # Восстановить user.rules / user6.rules (сохранённые ДО reset)
+    if [ -f "$PKG_STATE_DIR/user.rules" ]; then
+      cp -a "$PKG_STATE_DIR/user.rules" /etc/ufw/user.rules
+    fi
+    if [ -f "$PKG_STATE_DIR/user6.rules" ]; then
+      cp -a "$PKG_STATE_DIR/user6.rules" /etc/ufw/user6.rules
+    fi
+
+    # ВСЕГДА выключить UFW при удалении пакета
+    STATUS_LINE=$(ufw status 2>/dev/null | head -n1 || echo "")
+    if echo "$STATUS_LINE" | grep -qi "Status: active"; then
+      ufw disable 2>/dev/null || true
+    fi
+
+    ufw reload 2>/dev/null || true
+  ;;
+esac
+
+exit 0

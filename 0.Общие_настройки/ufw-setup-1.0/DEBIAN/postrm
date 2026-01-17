@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+PKG_STATE_DIR="/var/lib/ufw-setup"
+
+case "$1" in
+  purge)
+    rm -rf "$PKG_STATE_DIR"
+  ;;
+esac
+
+exit 0

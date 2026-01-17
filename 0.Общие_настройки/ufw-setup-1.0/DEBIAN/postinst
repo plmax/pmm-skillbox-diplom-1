@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+
+PKG_STATE_DIR="/var/lib/ufw-setup"
+mkdir -p "$PKG_STATE_DIR"
+
+case "$1" in
+  configure)
+    command -v ufw >/dev/null 2>&1 || exit 0
+
+    if [ ! -f "$PKG_STATE_DIR/saved" ]; then
+      # Сохранение состояния БЕЗ grep-ошибок
+      STATUS_LINE=$(ufw status 2>/dev/null | head -n1 || echo "")
+      if echo "$STATUS_LINE" | grep -qi "Status: active"; then
+        echo "enabled" > "$PKG_STATE_DIR/ufw_enabled"
+      else
+        echo "disabled" > "$PKG_STATE_DIR/ufw_enabled"
+      fi
+
+      # Бэкап правил ДО reset
+      cp /etc/ufw/user.rules "$PKG_STATE_DIR/" 2>/dev/null || true
+      cp /etc/ufw/user6.rules "$PKG_STATE_DIR/" 2>/dev/null || true
+      echo "1" > "$PKG_STATE_DIR/saved"
+    fi
+
+    # Сброс конфигурации
+    printf 'y\ny\n' | ufw reset 2>/dev/null || true
+
+    # Удаление бэкапов ufw (формат: имя.20260108_092306)
+    rm -f /etc/ufw/*.[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]
+
+    # Включение UFW (если не активен)
+    STATUS_LINE=$(ufw status 2>/dev/null | head -n1 || echo "")
+    if ! echo "$STATUS_LINE" | grep -qi "Status: active"; then
+      printf 'y\n' | ufw enable 2>/dev/null || true
+    fi
+
+    # Политика по умолчанию
+    ufw default deny incoming 2>/dev/null || true
+    ufw default allow outgoing 2>/dev/null || true
+
+    # Разрешить только SSH
+    ufw allow 22/tcp 2>/dev/null || true
+
+    # Применить изменения
+    ufw reload 2>/dev/null || true
+  ;;
+esac
+
+exit 0

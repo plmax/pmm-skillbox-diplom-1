@@ -1,0 +1,9 @@
+Package: ufw-setup
+Version: 1.0
+Section: admin
+Priority: optional
+Architecture: all
+Depends: ufw
+Maintainer: Pletnikov Maxim <pletnikov.m@yandex.ru>
+Description: UFW configuration setup
+ Sets up UFW firewall rules.

@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        # Проверка, что fail2ban установлен
+        if ! dpkg-query -W -f='${Status}' fail2ban 2>/dev/null | grep -q '^install ok installed'; then
+            echo "fail2ban не установлен. Установите его и повторите." >&2
+            exit 1
+        fi
+
+        # Перезапуск/запуск fail2ban
+        systemctl daemon-reload || true
+        systemctl try-restart fail2ban 2>/dev/null || systemctl restart fail2ban || true
+        systemctl enable fail2ban 2>/dev/null || true
+        ;;
+esac
+
+exit 0

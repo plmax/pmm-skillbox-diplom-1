@@ -1,0 +1,8 @@
+Package: fail2ban-config
+Version: 1.0-1
+Section: admin
+Priority: optional
+Architecture: all
+Depends: fail2ban (>= 1.0.2-2)
+Maintainer: Pletnikov Maxim <pletnikov.m@yandex.ru>
+Description: Пользовательская конфигурация для защиты SSH на Fail2Ban для Ubuntu 24.04
