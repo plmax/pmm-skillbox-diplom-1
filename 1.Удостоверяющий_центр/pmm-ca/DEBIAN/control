@@ -1,0 +1,8 @@
+Package: pmm-ca
+Version: 1.0
+Section: admin
+Priority: optional
+Architecture: all
+Depends: easy-rsa
+Maintainer: Pletnikov Maxim <pletnikov.m@yandex.ru>
+Description: Пользовательская конфигурация Easy-RSA CA на Ubuntu 24.04.
