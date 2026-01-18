@@ -1,4 +1,4 @@
-Package: fail2ban-config
+Package: fail2ban-base
 Version: 1.0-1
 Section: admin
 Priority: optional

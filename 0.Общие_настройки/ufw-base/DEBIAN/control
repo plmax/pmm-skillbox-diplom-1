@@ -1,4 +1,4 @@
-Package: ufw-setup
+Package: ufw-base
 Version: 1.0
 Section: admin
 Priority: optional
